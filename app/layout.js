@@ -7,7 +7,7 @@ const roboto = Roboto({
 });
 
 export const metadata = {
-  title: "Home Renovate",
+  title: "Renovate IT",
   description: "Generated A 3D model for your home",
 };
 
