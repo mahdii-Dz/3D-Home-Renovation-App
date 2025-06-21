@@ -7,7 +7,7 @@ import { GlobalContext } from '../context/Context'
 
 
 function Board() {
-    const { cursorActive, buildActive, handleClick, boardWrapperRef, walls, setIsPanning } = useContext(GlobalContext)
+    const { cursorActive, buildActive, handleClick, boardWrapperRef, walls, setIsPanning, combinedHandleMouseMove, helperWall } = useContext(GlobalContext)
     const boardRef = useRef()
     const [panningEnabled, setPanningEnabled] = useState(false)
     const panningTimerRef = useRef(null)
@@ -16,7 +16,7 @@ function Board() {
     function handleMouseDown() {
         panningTimerRef.current = setTimeout(() => {
             setPanningEnabled(true)
-        }, 300) 
+        }, 300)
     }
 
     function handleMouseUp() {
@@ -32,6 +32,7 @@ function Board() {
                 <div
                     onMouseDown={handleMouseDown}
                     onMouseUp={handleMouseUp}
+                    onMouseMove={(e) => combinedHandleMouseMove(e,transformState?.transformState)}
                     ref={boardWrapperRef}
                     className=' w-[1920px] h-[1080px]'
                     onClick={(e) => handleClick(e, transformState?.transformState)}
@@ -41,7 +42,7 @@ function Board() {
                         walls?.map((wall, index) => (
                             <div
                                 key={index}
-                                className='absolute bg-gray-600 z-50'
+                                className='absolute bg-gray-300 border border-gray-600 z-50'
                                 style={{
                                     willChange: 'transform',
                                     top: wall.top,
@@ -61,6 +62,30 @@ function Board() {
                             </div>
                         ))
                     }
+                    {
+                        helperWall?.map((wall, index) => (
+                            <div
+                                key={index}
+                                className='absolute bg-gray-300 border border-gray-600 z-50'
+                                style={{
+                                    willChange: 'transform',
+                                    top: wall.top,
+                                    left: wall.left,
+                                    width: wall.width,
+                                    height: wall.height,
+                                    transform: `rotate(${wall.rotate}deg)`,
+                                    transformOrigin: 'left center',
+                                }}
+                            >
+                                <div className='measure text-sm font-semibold text-gray-800 absolute -top-6 left-1/2 -translate-x-1/2 '>
+                                    {wall.meter == 0 ? null : `${wall.meter}m`}
+                                </div>
+                                <div className='measure text-sm font-semibold text-gray-800 absolute rotate-180 top-2 left-1/2 -translate-x-1/2 '>
+                                    {wall.meter == 0 ? null : `${wall.meter}m`}
+                                </div>
+                            </div>
+                        ))}
+
                 </div>
             </TransformComponent>
         )

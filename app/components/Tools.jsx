@@ -11,15 +11,15 @@ function Tools() {
         if (cursorActive) {
             return
         }
-        setCursorActive(!cursorActive)
-        setBuildActive(!buildActive)
+        setCursorActive(prev => !prev)
+        setBuildActive(prev => !prev)
     }
     function handleBuild() {
         if (buildActive) {
             return
         }
-        setBuildActive(!buildActive)
-        setCursorActive(!cursorActive)
+        setBuildActive(prev => !prev)
+        setCursorActive(prev => !prev)
     }
 
     return (

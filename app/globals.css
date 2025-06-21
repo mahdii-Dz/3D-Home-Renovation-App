@@ -3,4 +3,6 @@
 @theme{
     --color-primary: #2b7fff;
 }
- 
+.helperWall{
+    @apply absolute bg-gray-300 border border-gray-600 z-50
+}
