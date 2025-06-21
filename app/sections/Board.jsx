@@ -53,10 +53,10 @@ function Board() {
                                 }}
                             >
                                 <div className='measure text-sm font-semibold text-gray-800 absolute -top-6 left-1/2 -translate-x-1/2 '>
-                                    {wall.meter == 0 ? null : wall.meter}m
+                                    {wall.meter == 0 ? null : `${wall.meter}m`}
                                 </div>
                                 <div className='measure text-sm font-semibold text-gray-800 absolute rotate-180 top-2 left-1/2 -translate-x-1/2 '>
-                                    {wall.meter == 0 ? null : wall.meter}m
+                                    {wall.meter == 0 ? null : `${wall.meter}m`}
                                 </div>
                             </div>
                         ))
