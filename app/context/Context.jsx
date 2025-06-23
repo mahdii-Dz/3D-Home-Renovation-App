@@ -113,7 +113,7 @@ function Context({ children }) {
       const TopMeasure = document.createElement('div')
       TopMeasure.classList.add('TopMeasure')
       const BottomMeasure = document.createElement('div')
-      BottomMeasure.classList.add('TopMeasure')
+      BottomMeasure.classList.add('BottomMeasure')
       el.appendChild(TopMeasure)
       el.appendChild(BottomMeasure)
       helperWallRef.current = el
