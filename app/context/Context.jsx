@@ -3,21 +3,24 @@ import React, { createContext, useEffect, useRef, useState } from 'react'
 
 export const GlobalContext = createContext(null)
 function Context({ children }) {
+  // State management
   const [cursorActive, setCursorActive] = useState(true)
   const [buildActive, setBuildActive] = useState(false)
   const [walls, setWalls] = useState([])
   const [helperWall, setHelperWall] = useState([])
   const [isPanning, setIsPanning] = useState(false)
   const [startHelperWall, setStartHelperWall] = useState(false)
+
+  // Refs
   const boardWrapperRef = useRef(null)
   const lastCLickRef = useRef(null)
   const boxRef = useRef(null)
   const helperWallRef = useRef(null)
 
-
+  // Reset last click if build mode is off
   if (!buildActive) lastCLickRef.current = null
 
-  //this help the wall drawing be more accurate
+  // Snap angles to the nearest 0/90/180/-90/etc.
   function snapAngle(angle, threshold = 10) {
     const angles = [0, 90, 180, -90, -180, 270, -270]
     for (let target of angles) {
@@ -28,7 +31,7 @@ function Context({ children }) {
     return angle
   }
 
-  //this create a wall on 2D plane
+  // Handle board click to create wall
   function handleClick(e, transformState) {
     e.preventDefault()
     if (!buildActive || !boardWrapperRef.current || isPanning) return
@@ -46,15 +49,17 @@ function Context({ children }) {
       let snapPoint = null
       const snapThreshold = 30
       const pointsToCheck = []
+      // Gather all wall endpoints for snapping
       for (const wall of walls) {
         const start = { x: wall.left, y: wall.top }
         const end = {
           x: wall.left + Math.cos(wall.rotate * (Math.PI / 180)) * wall.width,
           x: wall.top + Math.sin(wall.rotate * (Math.PI / 180)) * wall.width,
         }
-        pointsToCheck.push(start,end)
+        pointsToCheck.push(start, end)
       }
-      for(const point of pointsToCheck){
+      // Try to find the closest point to snap to
+      for (const point of pointsToCheck) {
         const dist = Math.sqrt((x - point.x) ** 2 + (y - point.y) ** 2)
         if (dist < snapThreshold) {
           snapPoint = point
@@ -85,13 +90,14 @@ function Context({ children }) {
         y: prevY + Math.sin(rotateDeg * (Math.PI / 180)) * width,
       }
       setStartHelperWall(false)
+      // Clean up helper wall
       if (helperWallRef.current) {
         boardWrapperRef.current?.removeChild(helperWallRef.current)
         helperWallRef.current = null
       }
     }
   }
-
+  // Mount visual cursor and helper wall
   useEffect(() => {
     boxRef.current = document.createElement('div')
     boxRef.current.style.display = cursorActive ? 'none' : 'block'
@@ -102,6 +108,7 @@ function Context({ children }) {
     boxRef.current.style.pointerEvents = 'none'
     boxRef.current.style.transform = 'translate(-50%, -50%)'
     document.body.appendChild(boxRef.current)
+    // Create helper wall with labels
     if (lastCLickRef.current && !helperWallRef.current) {
       const el = document.createElement('div')
       el.classList.add('helperWall')
@@ -120,11 +127,11 @@ function Context({ children }) {
       boardWrapperRef.current.appendChild(el)
     }
 
-
+    // Reset helperWallRef when cursor is re-activated
     if (cursorActive) {
       helperWallRef.current = null
     }
-
+    // Cleanup on unmount
     return () => {
       if (boxRef.current && document.body.contains(boxRef.current)) {
         document.body.removeChild(boxRef.current)
@@ -136,6 +143,7 @@ function Context({ children }) {
     }
   }, [cursorActive, startHelperWall, walls])
 
+  // Handle red square movement with cursor
   function HandleBoxMove(e) {
     const WindowWidth = window.innerWidth
     if (!buildActive || WindowWidth < 786) return
@@ -146,6 +154,7 @@ function Context({ children }) {
     boxRef.current.style.top = `${y}px`
   }
 
+  // Render the dynamic helper wall during movement
   function HandleMouseMove(e, transformState) {
     const WindowWidth = window.innerWidth
     if (!buildActive || !boardWrapperRef.current || isPanning || !lastCLickRef.current || WindowWidth < 786) return
@@ -180,7 +189,7 @@ function Context({ children }) {
   }
 
 
-
+  // Combine mouse move logic for drawing and box rendering
   function combinedHandleMouseMove(e, transformState) {
     HandleMouseMove(e, transformState)
     HandleBoxMove(e)
