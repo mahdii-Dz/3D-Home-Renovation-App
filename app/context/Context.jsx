@@ -56,9 +56,13 @@ function Context({ children }) {
         rotate: rotateDeg,
         meter
       }
-      setStartHelperWall(false)
       setWalls(prev => [...prev, newWall])
       lastCLickRef.current = { x, y }
+      setStartHelperWall(false)
+      if (helperWallRef.current) {
+        boardWrapperRef.current?.removeChild(helperWallRef.current)
+        helperWallRef.current = null
+      }
     }
   }
 
@@ -72,23 +76,27 @@ function Context({ children }) {
     boxRef.current.style.pointerEvents = 'none'
     boxRef.current.style.transform = 'translate(-50%, -50%)'
     document.body.appendChild(boxRef.current)
-    if (startHelperWall && lastCLickRef.current) {
-      const { x: prevX, y: prevY } = lastCLickRef.current
-      helperWallRef.current = document.createElement('div')
-      setHelperWall([{
-        top: prevY,
-        left: prevX,
-        width: 0,
-        height: 8,
-        rotate: 0,
-        meter: 0
-      }])
+    if (lastCLickRef.current && !helperWallRef.current) {
+      const el = document.createElement('div')
+      el.classList.add('helperWall')
+      el.style.height = '8px'
+      el.style.transformOrigin = 'left center'
+      el.style.pointerEvents = 'none'
+      el.style.display = cursorActive ? 'none' : 'block'
+
+      const TopMeasure = document.createElement('div')
+      TopMeasure.classList.add('TopMeasure')
+      const BottomMeasure = document.createElement('div')
+      BottomMeasure.classList.add('TopMeasure')
+      el.appendChild(TopMeasure)
+      el.appendChild(BottomMeasure)
+      helperWallRef.current = el
+      boardWrapperRef.current.appendChild(el)
     }
-    if (helperWallRef.current) {
-      helperWallRef.current.style.display = cursorActive ? 'none' : 'block'
-    }
+
+
     if (cursorActive) {
-      setHelperWall([]) // Clear helper wall if cursor is active
+      helperWallRef.current = null
     }
 
     return () => {
@@ -97,13 +105,14 @@ function Context({ children }) {
       }
       if (helperWallRef.current && boardWrapperRef.current?.contains(helperWallRef.current)) {
         boardWrapperRef.current.removeChild(helperWallRef.current);
+        helperWallRef.current = null
       }
     }
-  }, [cursorActive])
+  }, [cursorActive, startHelperWall,walls])
 
   function HandleBoxMove(e) {
     const WindowWidth = window.innerWidth
-    if (!buildActive || WindowWidth < 1024) return
+    if (!buildActive || WindowWidth < 786) return
     e.preventDefault()
     const x = e.clientX
     const y = e.clientY
@@ -113,7 +122,7 @@ function Context({ children }) {
 
   function HandleMouseMove(e, transformState) {
     const WindowWidth = window.innerWidth
-    if (!buildActive || !boardWrapperRef.current || isPanning || !lastCLickRef.current || WindowWidth < 1024) return
+    if (!buildActive || !boardWrapperRef.current || isPanning || !lastCLickRef.current || WindowWidth < 786) return
     e.preventDefault()
 
     const rect = boardWrapperRef.current.getBoundingClientRect()
@@ -129,18 +138,23 @@ function Context({ children }) {
     const rotateDeg = snapAngle(Math.atan2(deltaY, deltaX) * (180 / Math.PI))
     if (meter < 0.25) return
 
-    setHelperWall([{
-      top: prevY,
-      left: prevX,
-      width: width,
-      height: 8,
-      rotate: rotateDeg,
-      meter: meter
-    }])
-
-
+    requestAnimationFrame(() => {
+      if (helperWallRef.current) {
+        helperWallRef.current.style.left = `${prevX}px`
+        helperWallRef.current.style.top = `${prevY}px`
+        helperWallRef.current.style.width = `${width}px`
+        helperWallRef.current.style.transformOrigin = 'left center'
+        helperWallRef.current.style.transform = `rotate(${rotateDeg}deg)`
+        if (helperWallRef.current.children.length >= 2) {
+          helperWallRef.current.children[0].textContent = `${meter}m`
+          helperWallRef.current.children[1].textContent = `${meter}m`
+        }
+      }
+    })
   }
 
+  
+  
   function combinedHandleMouseMove(e, transformState) {
     HandleMouseMove(e, transformState)
     HandleBoxMove(e)

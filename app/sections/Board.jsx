@@ -10,6 +10,7 @@ function Board() {
     const { cursorActive, buildActive, handleClick, boardWrapperRef, walls, setIsPanning, combinedHandleMouseMove, helperWall } = useContext(GlobalContext)
     const boardRef = useRef()
     const [panningEnabled, setPanningEnabled] = useState(false)
+    const [initialZoom, setInitialZoom] = useState(1)
     const panningTimerRef = useRef(null)
 
 
@@ -23,7 +24,7 @@ function Board() {
         clearTimeout(panningTimerRef.current)
         setPanningEnabled(false)
     }
-
+        
     const BoardContent = () => {
         const transformState = useTransformContext()
 
@@ -66,7 +67,7 @@ function Board() {
                         helperWall?.map((wall, index) => (
                             <div
                                 key={index}
-                                className='absolute bg-gray-300 border border-gray-600 z-50'
+                                className=''
                                 style={{
                                     willChange: 'transform',
                                     top: wall.top,
@@ -77,10 +78,10 @@ function Board() {
                                     transformOrigin: 'left center',
                                 }}
                             >
-                                <div className='measure text-sm font-semibold text-gray-800 absolute -top-6 left-1/2 -translate-x-1/2 '>
+                                <div className='measure '>
                                     {wall.meter == 0 ? null : `${wall.meter}m`}
                                 </div>
-                                <div className='measure text-sm font-semibold text-gray-800 absolute rotate-180 top-2 left-1/2 -translate-x-1/2 '>
+                                <div className='measure  '>
                                     {wall.meter == 0 ? null : `${wall.meter}m`}
                                 </div>
                             </div>
@@ -103,7 +104,7 @@ function Board() {
     useEffect(() => {
         document.body.style.cursor = buildActive ? 'crosshair' : 'default'
     }, [cursorActive, buildActive])
-
+    
 
     const Controls = () => {
         const { zoomIn, zoomOut } = useControls()
@@ -124,7 +125,7 @@ function Board() {
                 onPanning={handlePanning}
                 onPanningStop={handlePanningEnd}
                 minScale={1}
-                initialScale={1}>
+                >
                 <Controls />
                 <BoardContent />
             </TransformWrapper>

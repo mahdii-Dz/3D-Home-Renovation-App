@@ -3,6 +3,12 @@
 @theme{
     --color-primary: #2b7fff;
 }
+.TopMeasure{
+    @apply text-sm font-semibold text-gray-800 absolute -top-6 left-1/2 -translate-x-1/2 ;
+}
+.BottomMeasure{
+    @apply text-sm font-semibold text-gray-800 absolute rotate-180 top-2 left-1/2 -translate-x-1/2
+}
 .helperWall{
-    @apply absolute bg-gray-300 border border-gray-600 z-50
+    @apply absolute bg-gray-300 border border-gray-600 z-50;
 }
