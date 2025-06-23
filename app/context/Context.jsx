@@ -14,6 +14,7 @@ function Context({ children }) {
   const boxRef = useRef(null)
   const helperWallRef = useRef(null)
 
+
   if (!buildActive) lastCLickRef.current = null
 
   //this help the wall drawing be more accurate
@@ -40,10 +41,32 @@ function Context({ children }) {
     if (!lastCLickRef.current) {
       lastCLickRef.current = { x, y }
       setStartHelperWall(true)
+      return
     } else {
+      let snapPoint = null
+      const snapThreshold = 30
+      const pointsToCheck = []
+      for (const wall of walls) {
+        const start = { x: wall.left, y: wall.top }
+        const end = {
+          x: wall.left + Math.cos(wall.rotate * (Math.PI / 180)) * wall.width,
+          x: wall.top + Math.sin(wall.rotate * (Math.PI / 180)) * wall.width,
+        }
+        pointsToCheck.push(start,end)
+      }
+      for(const point of pointsToCheck){
+        const dist = Math.sqrt((x - point.x) ** 2 + (y - point.y) ** 2)
+        if (dist < snapThreshold) {
+          snapPoint = point
+          break
+        }
+      }
+
       const { x: prevX, y: prevY } = lastCLickRef.current
-      const deltaX = x - prevX
-      const deltaY = y - prevY
+      const finalX = snapPoint ? snapPoint.x : x
+      const finalY = snapPoint ? snapPoint.y : y
+      const deltaX = finalX - prevX
+      const deltaY = finalY - prevY
       const width = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
       const meter = (width / 100).toFixed(2)
       const rotateDeg = snapAngle(Math.atan2(deltaY, deltaX) * (180 / Math.PI))
@@ -57,7 +80,10 @@ function Context({ children }) {
         meter
       }
       setWalls(prev => [...prev, newWall])
-      lastCLickRef.current = { x, y }
+      lastCLickRef.current = {
+        x: prevX + Math.cos(rotateDeg * (Math.PI / 180)) * width,
+        y: prevY + Math.sin(rotateDeg * (Math.PI / 180)) * width,
+      }
       setStartHelperWall(false)
       if (helperWallRef.current) {
         boardWrapperRef.current?.removeChild(helperWallRef.current)
@@ -108,7 +134,7 @@ function Context({ children }) {
         helperWallRef.current = null
       }
     }
-  }, [cursorActive, startHelperWall,walls])
+  }, [cursorActive, startHelperWall, walls])
 
   function HandleBoxMove(e) {
     const WindowWidth = window.innerWidth
@@ -153,8 +179,8 @@ function Context({ children }) {
     })
   }
 
-  
-  
+
+
   function combinedHandleMouseMove(e, transformState) {
     HandleMouseMove(e, transformState)
     HandleBoxMove(e)
