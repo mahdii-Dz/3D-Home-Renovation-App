@@ -24,7 +24,7 @@ function Board() {
         clearTimeout(panningTimerRef.current)
         setPanningEnabled(false)
     }
-        
+
     const BoardContent = () => {
         const transformState = useTransformContext()
 
@@ -33,7 +33,7 @@ function Board() {
                 <div
                     onMouseDown={handleMouseDown}
                     onMouseUp={handleMouseUp}
-                    onMouseMove={(e) => combinedHandleMouseMove(e,transformState?.transformState)}
+                    onMouseMove={(e) => combinedHandleMouseMove(e, transformState?.transformState)}
                     ref={boardWrapperRef}
                     className=' w-[1920px] h-[1080px]'
                     onClick={(e) => handleClick(e, transformState?.transformState)}
@@ -43,7 +43,7 @@ function Board() {
                         walls?.map((wall, index) => (
                             <div
                                 key={index}
-                                className='absolute bg-gray-300 border border-gray-600 z-50'
+                                className='absolute bg-gray-300 z-40'
                                 style={{
                                     willChange: 'transform',
                                     top: wall.top,
@@ -63,30 +63,21 @@ function Board() {
                             </div>
                         ))
                     }
+                    {/* Render rounded corners between walls */}
                     {
-                        helperWall?.map((wall, index) => (
-                            <div
-                                key={index}
-                                className=''
-                                style={{
-                                    willChange: 'transform',
-                                    top: wall.top,
-                                    left: wall.left,
-                                    width: wall.width,
-                                    height: wall.height,
-                                    transform: `rotate(${wall.rotate}deg)`,
-                                    transformOrigin: 'left center',
-                                }}
+                        walls?.map((wall,index)=>(
+                            <div 
+                            key={index}
+                            className='w-2 h-2 rounded-[1px] bg-gray-300 z-50 absolute'
+                            style={{
+                                top: wall.lastCLickY ,
+                                left: wall.lastCLickX - 4,
+                                transform: `rotate(${wall.rotate}deg)`,
+                            }}
                             >
-                                <div className='measure '>
-                                    {wall.meter == 0 ? null : `${wall.meter}m`}
-                                </div>
-                                <div className='measure  '>
-                                    {wall.meter == 0 ? null : `${wall.meter}m`}
-                                </div>
                             </div>
-                        ))}
-
+                        ))
+                    }
                 </div>
             </TransformComponent>
         )
@@ -104,7 +95,7 @@ function Board() {
     useEffect(() => {
         document.body.style.cursor = buildActive ? 'crosshair' : 'default'
     }, [cursorActive, buildActive])
-    
+
 
     const Controls = () => {
         const { zoomIn, zoomOut } = useControls()
@@ -125,7 +116,7 @@ function Board() {
                 onPanning={handlePanning}
                 onPanningStop={handlePanningEnd}
                 minScale={1}
-                >
+            >
                 <Controls />
                 <BoardContent />
             </TransformWrapper>

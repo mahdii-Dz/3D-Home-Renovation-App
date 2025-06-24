@@ -76,19 +76,21 @@ function Context({ children }) {
       const meter = (width / 100).toFixed(2)
       const rotateDeg = snapAngle(Math.atan2(deltaY, deltaX) * (180 / Math.PI))
       if (meter < 0.25) return
+      lastCLickRef.current = {
+        x: prevX + Math.cos(rotateDeg * (Math.PI / 180)) * width,
+        y: prevY + Math.sin(rotateDeg * (Math.PI / 180)) * width,
+      }
       const newWall = {
         top: prevY,
         left: prevX,
         width: width,
         height: 8,
         rotate: rotateDeg,
-        meter
+        meter,
+        lastCLickX: lastCLickRef.current.x,
+        lastCLickY: lastCLickRef.current.y,
       }
       setWalls(prev => [...prev, newWall])
-      lastCLickRef.current = {
-        x: prevX + Math.cos(rotateDeg * (Math.PI / 180)) * width,
-        y: prevY + Math.sin(rotateDeg * (Math.PI / 180)) * width,
-      }
       setStartHelperWall(false)
       // Clean up helper wall
       if (helperWallRef.current) {
@@ -97,6 +99,8 @@ function Context({ children }) {
       }
     }
   }
+  console.log(walls);
+    
   // Mount visual cursor and helper wall
   useEffect(() => {
     boxRef.current = document.createElement('div')
