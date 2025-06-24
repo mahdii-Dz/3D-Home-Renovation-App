@@ -3,14 +3,14 @@ import Image from 'next/image'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { TransformComponent, TransformWrapper, useControls, useTransformContext } from 'react-zoom-pan-pinch'
 import { GlobalContext } from '../context/Context'
+import RenderFloor from '../components/RenderFloor'
 
 
 
 function Board() {
-    const { cursorActive, buildActive, handleClick, boardWrapperRef, walls, setIsPanning, combinedHandleMouseMove, helperWall } = useContext(GlobalContext)
+    const { cursorActive, buildActive, handleClick, boardWrapperRef, walls, setIsPanning, combinedHandleMouseMove, floors } = useContext(GlobalContext)
     const boardRef = useRef()
     const [panningEnabled, setPanningEnabled] = useState(false)
-    const [initialZoom, setInitialZoom] = useState(1)
     const panningTimerRef = useRef(null)
 
 
@@ -65,24 +65,30 @@ function Board() {
                     }
                     {/* Render rounded corners between walls */}
                     {
-                        walls?.map((wall,index)=>(
-                            <div 
-                            key={index}
-                            className='w-2 h-2 rounded-[1px] bg-gray-300 z-50 absolute'
-                            style={{
-                                top: wall.lastCLickY ,
-                                left: wall.lastCLickX - 4,
-                                transform: `rotate(${wall.rotate}deg)`,
-                            }}
+                        walls?.map((wall, index) => (
+                            <div
+                                key={index}
+                                className='w-2 h-2 rounded-[1px] bg-gray-300 z-50 absolute'
+                                style={{
+                                    top: wall.lastCLickY,
+                                    left: wall.lastCLickX - 4,
+                                    transform: `rotate(${wall.rotate}deg)`,
+                                }}
                             >
                             </div>
                         ))
+                    }
+                    {/* floors */}
+                    {
+                        <RenderFloor />
                     }
                 </div>
             </TransformComponent>
         )
 
     }
+
+    
 
     function handlePanning() {
         document.body.style.cursor = 'grabbing'

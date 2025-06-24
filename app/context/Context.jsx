@@ -7,9 +7,12 @@ function Context({ children }) {
   const [cursorActive, setCursorActive] = useState(true)
   const [buildActive, setBuildActive] = useState(false)
   const [walls, setWalls] = useState([])
-  const [helperWall, setHelperWall] = useState([])
+  const [floors, setFloors] = useState([])
   const [isPanning, setIsPanning] = useState(false)
   const [startHelperWall, setStartHelperWall] = useState(false)
+  const [shapeCoordinates, setShapeCoordinates] = useState([])
+  const [pointsString, setPointsString] = useState('')
+  const firstCLick = useRef(null)
 
   // Refs
   const boardWrapperRef = useRef(null)
@@ -42,7 +45,13 @@ function Context({ children }) {
     const y = (e.clientY - rect.top) / scale
 
     if (!lastCLickRef.current) {
+      firstCLick.current = { x, y }
       lastCLickRef.current = { x, y }
+      setShapeCoordinates((prev) => {
+        const newCoordinates = [...prev, lastCLickRef.current];
+        setPointsString(newCoordinates.map(coord => `${coord.x},${coord.y}`).join(' '));
+        return newCoordinates;
+      })
       setStartHelperWall(true)
       return
     } else {
@@ -54,7 +63,7 @@ function Context({ children }) {
         const start = { x: wall.left, y: wall.top }
         const end = {
           x: wall.left + Math.cos(wall.rotate * (Math.PI / 180)) * wall.width,
-          x: wall.top + Math.sin(wall.rotate * (Math.PI / 180)) * wall.width,
+          y: wall.top + Math.sin(wall.rotate * (Math.PI / 180)) * wall.width,
         }
         pointsToCheck.push(start, end)
       }
@@ -80,6 +89,11 @@ function Context({ children }) {
         x: prevX + Math.cos(rotateDeg * (Math.PI / 180)) * width,
         y: prevY + Math.sin(rotateDeg * (Math.PI / 180)) * width,
       }
+      setShapeCoordinates((prev) => {
+        const newCoordinates = [...prev, lastCLickRef.current];
+        setPointsString(newCoordinates.map(coord => `${coord.x},${coord.y}`).join(' '));
+        return newCoordinates;
+      })
       const newWall = {
         top: prevY,
         left: prevX,
@@ -90,17 +104,25 @@ function Context({ children }) {
         lastCLickX: lastCLickRef.current.x,
         lastCLickY: lastCLickRef.current.y,
       }
-      setWalls(prev => [...prev, newWall])
+      setWalls((prev) => [...prev, newWall])
       setStartHelperWall(false)
       // Clean up helper wall
       if (helperWallRef.current) {
         boardWrapperRef.current?.removeChild(helperWallRef.current)
         helperWallRef.current = null
       }
+      if (shapeCoordinates.length >= 3) {
+        setFloors(prev => [...prev, {
+          id: Date.now(),
+          top:firstCLick.current.y,
+          left:firstCLick.current.x,
+          points: shapeCoordinates,
+          pointsString: shapeCoordinates.map(coord => `${coord.x},${coord.y}`).join(' '),
+        }]);
+      }
     }
   }
-  console.log(walls);
-    
+
   // Mount visual cursor and helper wall
   useEffect(() => {
     boxRef.current = document.createElement('div')
@@ -135,6 +157,7 @@ function Context({ children }) {
     if (cursorActive) {
       helperWallRef.current = null
     }
+
     // Cleanup on unmount
     return () => {
       if (boxRef.current && document.body.contains(boxRef.current)) {
@@ -146,6 +169,12 @@ function Context({ children }) {
       }
     }
   }, [cursorActive, startHelperWall, walls])
+  useEffect(() => {
+    if (!cursorActive) {
+      setShapeCoordinates([])
+      setPointsString('')
+    }
+  }, [cursorActive])
 
   // Handle red square movement with cursor
   function HandleBoxMove(e) {
@@ -200,7 +229,19 @@ function Context({ children }) {
   }
 
   return (
-    <GlobalContext.Provider value={{ cursorActive, buildActive, setCursorActive, setBuildActive, handleClick, boardWrapperRef, walls, setIsPanning, combinedHandleMouseMove, helperWall }}>
+    <GlobalContext.Provider
+      value={{
+        cursorActive,
+        buildActive,
+        setCursorActive,
+        setBuildActive,
+        handleClick,
+        boardWrapperRef,
+        walls,
+        setIsPanning,
+        combinedHandleMouseMove,
+        floors
+      }}>
       {children}
     </GlobalContext.Provider>
   )
