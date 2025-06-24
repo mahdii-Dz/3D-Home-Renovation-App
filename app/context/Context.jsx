@@ -4,6 +4,8 @@ import React, { createContext, useEffect, useRef, useState } from 'react'
 export const GlobalContext = createContext(null)
 function Context({ children }) {
   // State management
+  const [D2Active, setD2Active] = useState(true)
+  const [D3Active, setD3Active] = useState(false)
   const [cursorActive, setCursorActive] = useState(true)
   const [buildActive, setBuildActive] = useState(false)
   const [walls, setWalls] = useState([])
@@ -240,7 +242,11 @@ function Context({ children }) {
         walls,
         setIsPanning,
         combinedHandleMouseMove,
-        floors
+        floors,
+        D2Active,
+        setD2Active,
+        D3Active,
+        setD3Active
       }}>
       {children}
     </GlobalContext.Provider>
