@@ -15,7 +15,7 @@ export const metadata = {
     url: "https://renovate-it.netlify.app/",
     images: [
       {
-        url: "/Renovate-IT.png",
+        url: "https://renovate-it.netlify.app/Renovate-IT.png",
         width: 1366,
         height: 768,
       },
@@ -27,7 +27,7 @@ export const metadata = {
     description:
       "Generated A 3D model for your home",
     creator: "@mahdii_Dz",
-    image: ["/Renovate-IT.png",],
+    image: ["https://renovate-it.netlify.app/Renovate-IT.png",],
   },
 };
 
