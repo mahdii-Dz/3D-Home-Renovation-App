@@ -2,6 +2,7 @@
 
 @theme{
     --color-primary: #2b7fff;
+    --color-primary-dark: #2b60ff;
 }
 .TopMeasure{
     @apply text-sm font-semibold text-gray-800 absolute -top-6 left-1/2 -translate-x-1/2 ;

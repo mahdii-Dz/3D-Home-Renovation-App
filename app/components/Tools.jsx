@@ -5,7 +5,7 @@ import { GlobalContext } from '../context/Context'
 
 
 function Tools() {
-    const { cursorActive, buildActive, setBuildActive, setCursorActive } = useContext(GlobalContext)
+    const { cursorActive, buildActive, setBuildActive, setCursorActive, helperWallRef, lastCLickRef, setWalls, setFloors, setShapeCoordinates } = useContext(GlobalContext)
 
     function handleCursor() {
         if (cursorActive) {
@@ -22,8 +22,17 @@ function Tools() {
         setCursorActive(prev => !prev)
     }
 
+    function handleCLick() {
+        setShapeCoordinates([])
+        setWalls([])
+        setFloors([])
+        lastCLickRef.current = null
+        helperWallRef.current = null
+    }
+
     return (
-            <div className='Tools flex gap-6 py-2 px-8'>
+        <nav className='w-full flex justify-between items-center px-8'>
+            <div className='Tools flex gap-6 py-2'>
                 <div onClick={handleCursor} className={`w-10 h-10 border border-gray-200 rounded-xl flex justify-center items-center hover:bg-primary/10 hover:border-primary cursor-pointer ${cursorActive ? 'bg-primary/10 border-primary' : ''}`}>
                     <Image alt='Cursor' src={'/Cursor.png'} width={24} height={24} />
                 </div>
@@ -31,6 +40,10 @@ function Tools() {
                     <Image alt='Cursor' src={'/Build.svg'} width={24} height={24} />
                 </div>
             </div>
+            <div>
+                <button onClick={handleCLick} className='px-4 py-1.5 bg-primary cursor-pointer hover:bg-primary-dark active:bg-primary/80 text-white font-semibold rounded-lg'>Reset</button>
+            </div>
+        </nav>
     )
 }
 

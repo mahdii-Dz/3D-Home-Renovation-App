@@ -20,9 +20,9 @@ function Board() {
 
     return (
         <>
-            <div className='fixed bottom-4 left-1/2 -translate-1/2 px-4 py-1.5 bg-white shadow-lg rounded-full flex justify-center items-center gap-4 z-50'>
-                <button onClick={handle2D} className={`p-2 hover:bg-primary/10 rounded-full border border-transparent cursor-pointer ${D2Active ? 'bg-primary/10 border !border-primary' : ''}`}>2D</button>
-                <button onClick={handle3D} className={`p-2 hover:bg-primary/10 rounded-full border border-transparent cursor-pointer ${D3Active ? 'bg-primary/10 border !border-primary' : ''}`}>3D</button>
+            <div className='fixed bottom-0 left-1/2 -translate-1/2 px-4 py-1.5 bg-white shadow-lg rounded-full flex justify-center items-center gap-4 z-50'>
+                <button onClick={handle2D} className={`py-2 px-2.5 hover:bg-primary/10 rounded-full border border-transparent cursor-pointer ${D2Active ? 'bg-primary/10 border !border-primary' : ''}`}>2D</button>
+                <button onClick={handle3D} className={`py-2 px-2.5 hover:bg-primary/10 rounded-full border border-transparent cursor-pointer ${D3Active ? 'bg-primary/10 border !border-primary' : ''}`}>3D</button>
             </div>
             {
                 D2Active

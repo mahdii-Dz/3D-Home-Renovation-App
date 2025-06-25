@@ -14,11 +14,11 @@ function Context({ children }) {
   const [startHelperWall, setStartHelperWall] = useState(false)
   const [shapeCoordinates, setShapeCoordinates] = useState([])
   const [pointsString, setPointsString] = useState('')
-  const firstCLick = useRef(null)
-
+  
   // Refs
   const boardWrapperRef = useRef(null)
   const lastCLickRef = useRef(null)
+  const firstCLick = useRef(null)
   const boxRef = useRef(null)
   const helperWallRef = useRef(null)
 
@@ -181,7 +181,7 @@ function Context({ children }) {
   // Handle red square movement with cursor
   function HandleBoxMove(e) {
     const WindowWidth = window.innerWidth
-    if (!buildActive || WindowWidth < 786) return
+    if (!buildActive || WindowWidth < 786 || D3Active) return
     e.preventDefault()
     const x = e.clientX
     const y = e.clientY
@@ -240,13 +240,18 @@ function Context({ children }) {
         handleClick,
         boardWrapperRef,
         walls,
+        setWalls,
+        lastCLickRef,
+        helperWallRef,
         setIsPanning,
         combinedHandleMouseMove,
         floors,
+        setFloors,
         D2Active,
         setD2Active,
         D3Active,
-        setD3Active
+        setD3Active,
+        setShapeCoordinates
       }}>
       {children}
     </GlobalContext.Provider>
