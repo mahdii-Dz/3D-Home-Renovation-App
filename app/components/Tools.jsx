@@ -23,14 +23,14 @@ function Tools() {
     }
 
     return (
-        <div className='Tools flex gap-6 py-2 px-8'>
-            <div onClick={handleCursor} className={`w-12 h-12 border border-gray-200 rounded-xl flex justify-center items-center hover:bg-primary/10 hover:border-primary cursor-pointer ${cursorActive ? 'bg-primary/10 border-primary' : ''}`}>
-                <Image alt='Cursor' src={'/Cursor.png'} width={32} height={32} />
+            <div className='Tools flex gap-6 py-2 px-8'>
+                <div onClick={handleCursor} className={`w-10 h-10 border border-gray-200 rounded-xl flex justify-center items-center hover:bg-primary/10 hover:border-primary cursor-pointer ${cursorActive ? 'bg-primary/10 border-primary' : ''}`}>
+                    <Image alt='Cursor' src={'/Cursor.png'} width={24} height={24} />
+                </div>
+                <div onClick={handleBuild} className={`w-10 h-10 border border-gray-200 rounded-xl flex justify-center items-center hover:bg-primary/10 hover:border-primary cursor-pointer ${buildActive ? 'bg-primary/10 border-primary' : ''}`}>
+                    <Image alt='Cursor' src={'/Build.svg'} width={24} height={24} />
+                </div>
             </div>
-            <div onClick={handleBuild} className={`w-12 h-12 border border-gray-200 rounded-xl flex justify-center items-center hover:bg-primary/10 hover:border-primary cursor-pointer ${buildActive ? 'bg-primary/10 border-primary' : ''}`}>
-                <Image alt='Cursor' src={'/Build.svg'} width={32} height={32} />
-            </div>
-        </div>
     )
 }
 
