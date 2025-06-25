@@ -1,8 +1,11 @@
 'use client'
 import React, { useContext } from 'react'
-import D2Board from './D2Board'
+import dynamic from 'next/dynamic'
+
 import { GlobalContext } from '../context/Context'
-import D3Board from './D3Board'
+const D2Board = dynamic(() => import('./D2Board'))
+const D3Board = dynamic(() => import('./D3Board'))
+
 
 function Board() {
     const { D2Active, D3Active, setD2Active, setD3Active, walls } = useContext(GlobalContext)
